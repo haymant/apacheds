@@ -1,0 +1,98 @@
+kind: Template
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: apacheds
+    name: apacheds
+  spec:
+    tags:
+    - annotations:
+        openshift.io/imported-from: haymant/apacheds
+      from:
+        kind: DockerImage
+        name: haymant/apacheds
+      generation: null
+      importPolicy: {}
+      name: latest
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: apacheds
+    name: apacheds
+  spec:
+    replicas: 1
+    selector:
+      app: apacheds
+      deploymentconfig: apacheds
+    strategy:
+      resources: {}
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: apacheds
+          deploymentconfig: apacheds
+      spec:
+        containers:
+        - image: haymant/apacheds
+          name: apacheds
+          ports:
+          - containerPort: 10389
+            protocol: TCP
+          resources:
+            cpu: 1
+            memory: 1Gi 
+          volumeMounts:
+          - mountPath: /bootstrap
+            name: apacheds-volume-1
+        volumes:
+        - name: apacheds-volume-1
+          persistentVolumeClaim:
+            claimName: bootstrap
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - apacheds
+        from:
+          kind: ImageStreamTag
+          name: apacheds:latest
+      type: ImageChange
+  status: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: apacheds
+    name: apacheds
+  spec:
+    ports:
+    - name: 10389-tcp
+      port: 10389
+      protocol: TCP
+      targetPort: 10389
+    selector:
+      app: apacheds
+      deploymentconfig: apacheds
+  status:
+    loadBalancer: {}
+kind: List
+metadata: {}
+

@@ -1,6 +1,8 @@
 Apache DS in a Docker Container
 ===============================
 
+This is forked to allow random openshift user to run the docker image.
+
 Apache DS is a Java implementation of Directory server (**LDAP**). This projects puts it into container and makes it easier to configure and bootstrap it with some data.
 
 [Apache DS Page](1) that explains what it is.
